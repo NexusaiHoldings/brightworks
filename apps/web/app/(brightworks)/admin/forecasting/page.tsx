@@ -1,3 +1,4 @@
+import React from 'react';
 import { getLatestForecasts, getRecentRuns, type SkuForecast, type ForecastRun } from '@/lib/brightworks/demand-forecast';
 
 export const dynamic = 'force-dynamic';

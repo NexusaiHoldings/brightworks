@@ -1,4 +1,4 @@
-import { Pool } from 'pg';
+import { Pool, type PoolClient } from 'pg';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -24,7 +24,7 @@ export interface ForecastRun {
   high_risk_count: number;
 }
 
-async function ensureTables(client: Awaited<ReturnType<typeof pool.connect>>): Promise<void> {
+async function ensureTables(client: PoolClient): Promise<void> {
   await client.query(`
     CREATE TABLE IF NOT EXISTS brightworks_skus (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
