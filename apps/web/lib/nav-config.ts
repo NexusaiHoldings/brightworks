@@ -1,21 +1,43 @@
-export const NAV_CONFIG = {
+export type NavLink = {
+  label: string;
+  href: string;
+  description?: string;
+  external?: boolean;
+  target?: "_self" | "_blank";
+};
+
+export type NavGroup = {
+  title: string;
+  links: NavLink[];
+};
+
+export type NavConfig = {
+  primary: NavLink[];
+  groups: NavGroup[];
+};
+
+export const NAV_CONFIG: NavConfig = {
   primary: [
+    { label: "Home", href: "/" },
     { label: "Shop", href: "/shop" },
-    { label: "Selector", href: "/selector" },
-    { label: "Installer", href: "/installer" },
+    { label: "Product Selector", href: "/selector" },
+    { label: "Installer Portal", href: "/installer" },
   ],
   groups: [
     {
-      label: "Account",
-      items: [{ label: "Orders", href: "/account/orders" }],
+      title: "Installers",
+      links: [
+        { label: "Installer Portal", href: "/installer" },
+        { label: "Apply to Install", href: "/installer/apply" },
+      ],
     },
     {
-      label: "Admin",
-      items: [{ label: "Forecasting", href: "/admin/forecasting" }],
+      title: "Account",
+      links: [{ label: "Order History", href: "/account/orders" }],
     },
     {
-      label: "Installer",
-      items: [{ label: "Apply", href: "/installer/apply" }],
+      title: "Admin",
+      links: [{ label: "Demand Forecasting", href: "/admin/forecasting" }],
     },
   ],
 };
