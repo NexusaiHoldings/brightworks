@@ -1,23 +1,28 @@
 export const NAV_CONFIG = {
   primary: [
-    { label: "Shop", href: "/shop" },
-    { label: "Selector", href: "/selector" },
+    { href: "/conversation", label: "Conversation" },
+    { href: "/work", label: "Work" },
+    { href: "/artifact", label: "Artifacts" },
+    { href: "/approval", label: "Approvals" },
+    { href: "/direct", label: "Direct" },
+    { href: "/shop", label: "Shop" },
+    { href: "/selector", label: "Product Selector" },
   ],
   groups: [
     {
-      label: "Installer",
+      label: "Installers",
       items: [
-        { label: "Installer Portal", href: "/installer" },
-        { label: "Apply", href: "/installer/apply" },
+        { href: "/installer", label: "Installer Portal" },
+        { href: "/installer/apply", label: "Apply to Install" },
       ],
     },
     {
       label: "Account",
-      items: [{ label: "Orders", href: "/account/orders" }],
+      items: [{ href: "/account/orders", label: "Order History" }],
     },
     {
       label: "Admin",
-      items: [{ label: "Forecasting", href: "/admin/forecasting" }],
+      items: [{ href: "/admin/forecasting", label: "Forecasting" }],
     },
   ],
-};
+} as const;
