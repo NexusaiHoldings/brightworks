@@ -11,6 +11,7 @@ import {
   LOCATION_OPTIONS,
   formatPrice,
   getRecommendation,
+  getRecommendationReasoning,
   isBundle,
 } from "@/lib/brightworks/selector-logic";
 
@@ -116,15 +117,15 @@ export default function SelectorPage() {
     (step === "failure" && failureMode !== null);
 
   let recommendation = null;
+  let reasoning: string | null = null;
   if (step === "result" && installLocation && homeFootprint && failureMode) {
+    const inputs: SelectorInputs = { installLocation, homeFootprint, failureMode };
     try {
-      recommendation = getRecommendation({
-        installLocation,
-        homeFootprint,
-        failureMode,
-      } satisfies SelectorInputs);
+      recommendation = getRecommendation(inputs);
+      reasoning = getRecommendationReasoning(inputs);
     } catch {
       recommendation = null;
+      reasoning = null;
     }
   }
 
@@ -245,6 +246,11 @@ export default function SelectorPage() {
                 </span>
               )}
               <h3 style={{ margin: "0 0 0.5rem" }}>{recommendation.name}</h3>
+              {reasoning && (
+                <p className="muted" style={{ marginBottom: "0.75rem" }}>
+                  {reasoning}
+                </p>
+              )}
               <p>{recommendation.description}</p>
               {isBundle(recommendation) && recommendation.includes.length > 0 && (
                 <>

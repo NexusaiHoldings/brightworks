@@ -229,6 +229,32 @@ export function formatPrice(cents: number): string {
   return `$${(cents / 100).toFixed(2)}`;
 }
 
+export function getRecommendationReasoning(inputs: SelectorInputs): string {
+  const locationLabel: Record<InstallLocation, string> = {
+    roofline: "roofline / eaves",
+    shrub: "shrubs or bushes",
+    tree: "trees",
+  };
+  const footprintLabel: Record<HomeFootprint, string> = {
+    small: "small home (under 1,500 sq ft)",
+    medium: "medium home (1,500–3,000 sq ft)",
+    large: "large home (over 3,000 sq ft)",
+  };
+  const failureLabel: Record<FailureMode, string> = {
+    timer: "timer failure",
+    connector: "connector burnout",
+  };
+  const fixLabel: Record<FailureMode, string> = {
+    timer: "a built-in timer rated for outdoor use",
+    connector: "reinforced locking connectors that eliminate burnout",
+  };
+  return (
+    `Based on your ${locationLabel[inputs.installLocation]} installation on a ` +
+    `${footprintLabel[inputs.homeFootprint]}, and your prior ${failureLabel[inputs.failureMode]}, ` +
+    `we selected a product specifically engineered with ${fixLabel[inputs.failureMode]}.`
+  );
+}
+
 export const STEP_LABELS: Record<string, string> = {
   installLocation: "Where are your lights installed?",
   homeFootprint: "What is your home's footprint?",
