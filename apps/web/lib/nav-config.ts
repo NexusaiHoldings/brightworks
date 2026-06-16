@@ -1,17 +1,24 @@
-import { NAV_CONFIG as BASE_NAV_CONFIG } from "@/components/navigation/nav-config";
+export interface NavLink {
+  label: string;
+  href: string;
+}
 
-const basePrimary = BASE_NAV_CONFIG.primary ?? [];
-const baseGroups = BASE_NAV_CONFIG.groups ?? [];
+export interface NavGroup {
+  label: string;
+  links: NavLink[];
+}
 
-export const NAV_CONFIG: typeof BASE_NAV_CONFIG = {
-  ...BASE_NAV_CONFIG,
+export interface NavConfigShape {
+  primary: NavLink[];
+  groups: NavGroup[];
+}
+
+export const NAV_CONFIG: NavConfigShape = {
   primary: [
-    ...basePrimary,
     { label: "Shop", href: "/shop" },
     { label: "Product Selector", href: "/selector" },
   ],
   groups: [
-    ...baseGroups,
     {
       label: "Installers",
       links: [
