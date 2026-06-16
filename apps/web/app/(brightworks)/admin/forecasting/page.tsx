@@ -1,9 +1,12 @@
+import { redirect } from "next/navigation";
 import {
   generateDemandForecast,
   getLatestForecast,
   storeForecastResults,
 } from "@/lib/brightworks/demand-forecast";
 import type { ForecastReport, SkuForecast } from "@/lib/brightworks/demand-forecast";
+import { getCurrentUser } from "@/lib/brightworks/access";
+import { getSeasonalLabel, getSeasonalAdjustmentPercent } from "@/lib/brightworks/pricing";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -144,6 +147,12 @@ function StatCard({
 }
 
 export default async function ForecastingPage() {
+  const user = await getCurrentUser();
+  if (!user) redirect("/api/auth/login?callbackUrl=/admin/forecasting");
+
+  const seasonalLabel = getSeasonalLabel();
+  const seasonalPct = getSeasonalAdjustmentPercent();
+
   let forecast: ForecastReport | null = null;
   let loadError: string | null = null;
 
@@ -221,6 +230,12 @@ export default async function ForecastingPage() {
           <div className="toolbar">
             <span style={{ fontWeight: 600 }}>
               Sell-In Deadline: October 1, {sellIn.getFullYear()}
+            </span>
+            <span
+              className="muted"
+              style={{ fontSize: "0.85rem" }}
+            >
+              {seasonalLabel} — wholesale pricing adjusted {seasonalPct}
             </span>
             <a href="/api/cron/demand-forecast" className="btn secondary">
               Refresh Forecast

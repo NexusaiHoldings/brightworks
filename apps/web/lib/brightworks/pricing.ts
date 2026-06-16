@@ -123,6 +123,22 @@ export async function getPricingTiers(): Promise<PricingTier[]> {
   });
 }
 
+// Returns a human-readable label for the current seasonal pricing period.
+export function getSeasonalLabel(month?: number): "Peak Season" | "Pre-Season" | "Off-Season" {
+  const currentMonth = month ?? new Date().getMonth();
+  if (currentMonth >= 8 || currentMonth <= 0) return "Peak Season";
+  if (currentMonth >= 6 && currentMonth <= 7) return "Pre-Season";
+  return "Off-Season";
+}
+
+// Returns the seasonal adjustment as a formatted percentage string (+5%, -3%, -10%).
+export function getSeasonalAdjustmentPercent(month?: number): string {
+  const currentMonth = month ?? new Date().getMonth();
+  if (currentMonth >= 8 || currentMonth <= 0) return "+5%";
+  if (currentMonth >= 6 && currentMonth <= 7) return "-3%";
+  return "-10%";
+}
+
 // Returns a seasonal price adjustment (positive = surcharge, negative = discount).
 export function calculateSeasonalAdjustment(basePrice: number, month?: number): number {
   const currentMonth = month ?? new Date().getMonth(); // 0–11
