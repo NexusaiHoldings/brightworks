@@ -6,6 +6,7 @@
  * substantiation requirement identified in data_findings.
  */
 import type { JSX } from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import {
   listActiveSkus,
@@ -16,6 +17,12 @@ import {
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
+export const metadata: Metadata = {
+  title: "Shop — Professional Roofline Lighting Products",
+  description:
+    "Weatherproof timers, connectors, and install kits for roofline LED lighting. NRTL-certified IP65 products.",
+};
+
 export default async function ShopPage(): Promise<JSX.Element> {
   const skus = await listActiveSkus();
   const company = process.env.COMPANY_NAME ?? "Brightworks";
@@ -25,7 +32,7 @@ export default async function ShopPage(): Promise<JSX.Element> {
       <h1>Shop</h1>
       <p>Professional roofline lighting products from {company}.</p>
       {skus.length === 0 ? (
-        <p className="empty">Products are being prepared — check back soon.</p>
+        <div className="empty">Products are being prepared — check back soon.</div>
       ) : (
         <div>
           {skus.map((sku) => {
