@@ -6,7 +6,7 @@
  * /login for unauthenticated users.
  */
 
-import type { JSX } from "react";
+import type { JSX, CSSProperties } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getAdminUser } from "@/lib/admin-auth";
@@ -36,12 +36,13 @@ function riskLabel(risk: StockoutRisk): string {
   return labels[risk];
 }
 
-function riskStyle(risk: StockoutRisk): string {
-  const styles: Record<StockoutRisk, string> = {
-    critical: "color:white;background:#b91c1c;padding:2px 8px;border-radius:4px;font-weight:600;font-size:0.8rem",
-    high: "color:white;background:#c2410c;padding:2px 8px;border-radius:4px;font-weight:600;font-size:0.8rem",
-    medium: "color:#92400e;background:#fef3c7;padding:2px 8px;border-radius:4px;font-weight:600;font-size:0.8rem",
-    low: "color:#166534;background:#dcfce7;padding:2px 8px;border-radius:4px;font-weight:600;font-size:0.8rem",
+function riskStyle(risk: StockoutRisk): CSSProperties {
+  const base: CSSProperties = { padding: "2px 8px", borderRadius: "4px", fontWeight: 600, fontSize: "0.8rem" };
+  const styles: Record<StockoutRisk, CSSProperties> = {
+    critical: { ...base, color: "white", background: "#b91c1c" },
+    high:     { ...base, color: "white", background: "#c2410c" },
+    medium:   { ...base, color: "#92400e", background: "#fef3c7" },
+    low:      { ...base, color: "#166534", background: "#dcfce7" },
   };
   return styles[risk];
 }
@@ -79,7 +80,7 @@ function SummaryCard({
   value: string | number;
   accent?: string;
 }): JSX.Element {
-  const accentStyle = accent ? `border-left:4px solid ${accent}` : "";
+  const accentStyle: CSSProperties = accent ? { borderLeft: `4px solid ${accent}` } : {};
   return (
     <div className="card" style={accentStyle}>
       <div className="muted" style={{ fontSize: "0.8rem", marginBottom: "4px" }}>{label}</div>
