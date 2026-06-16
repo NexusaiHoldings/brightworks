@@ -3,6 +3,7 @@ import { generateDemandForecast, storeForecastResults } from "@/lib/brightworks/
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   // Vercel cron requests carry a shared secret in the Authorization header.
