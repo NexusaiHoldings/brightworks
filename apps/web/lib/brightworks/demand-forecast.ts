@@ -161,7 +161,7 @@ export async function getSkuInventory(): Promise<SkuRow[]> {
   const result = await db.query(
     "SELECT id, name, current_inventory, keywords, region FROM brightworks_skus ORDER BY name"
   );
-  return result.rows as SkuRow[];
+  return result.rows as unknown as SkuRow[];
 }
 
 export async function storeForecastResults(forecasts: SkuForecast[]): Promise<void> {
