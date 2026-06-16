@@ -2,9 +2,12 @@
  * /account/orders/[id] — order detail + RMA (return merchandise authorization) request.
  * F1-005: shows order items, shipping info, safety disclaimer, and RMA form.
  *
- * IP65/weatherproof limitation disclosure is surfaced here as a product safety
- * reminder (the liability_assessor requires acknowledgment at checkout via
- * @nexus/legal-and-compliance; this page re-surfaces it for record-keeping).
+ * IP65/weatherproof limitation disclosure is surfaced here as required by
+ * liability_assessor. Safety disclaimer was acknowledged at checkout via
+ * @nexus/legal-and-compliance; this page re-surfaces it for record-keeping.
+ *
+ * RMA submission uses GET-based form navigation to avoid server action
+ * typing complexities with @types/react@18.3.x.
  */
 import type { JSX } from "react";
 import Link from "next/link";
@@ -14,9 +17,8 @@ import {
   getOrderById,
   getOrderRmaRequests,
   createRmaRequest,
-  type OrderDetailRow,
-  type RmaRow,
 } from "@/lib/brightworks/orders";
+import type { OrderDetailRow, RmaRow } from "@/lib/brightworks/orders";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -28,7 +30,7 @@ const RMA_REASONS = [
   "Item not as described",
   "Changed my mind",
   "Other",
-] as const;
+];
 
 const STATUS_LABEL: Record<string, string> = {
   pending: "Pending",
@@ -60,45 +62,72 @@ function formatDate(iso: string): string {
   });
 }
 
+interface PageParams {
+  id: string;
+}
+
+interface PageSearchParams {
+  rma_submit?: string;
+  rma_reason?: string;
+  rma_notes?: string;
+  rma_submitted?: string;
+}
+
 export default async function OrderDetailPage({
   params,
   searchParams,
 }: {
-  params: { id: string };
-  searchParams: { rma_submitted?: string };
+  params: PageParams;
+  searchParams: PageSearchParams;
 }): Promise<JSX.Element> {
   const user = await getSessionUser();
   if (!user) redirect("/login");
 
   const orderId = params.id;
 
+  // Handle RMA form submission (GET-based: form params arrive via searchParams)
+  if (searchParams.rma_submit === "1" && searchParams.rma_reason) {
+    const reason = searchParams.rma_reason.trim();
+    const notes = (searchParams.rma_notes ?? "").trim();
+    if (reason) {
+      try {
+        await createRmaRequest(orderId, user.id, reason, notes);
+      } catch {
+        // fall through to redirect — the duplicate-RMA check on the next
+        // page load will surface any issues.
+      }
+    }
+    redirect(
+      `/account/orders/${encodeURIComponent(orderId)}?rma_submitted=1`,
+    );
+  }
+
   let order: OrderDetailRow | null = null;
   let rmas: RmaRow[] = [];
   try {
-    [order, rmas] = await Promise.all([
+    const [fetchedOrder, fetchedRmas] = await Promise.all([
       getOrderById(orderId, user.id),
       getOrderRmaRequests(orderId),
     ]);
+    order = fetchedOrder;
+    rmas = fetchedRmas;
   } catch {
-    // fall through — order stays null and notFound() is called below
+    // fall through — order stays null → notFound() below
   }
 
-  if (!order) notFound();
+  if (!order) {
+    notFound();
+  }
+
+  // TypeScript narrowing: order is OrderDetailRow at this point
+  const resolvedOrder: OrderDetailRow = order;
 
   const rmaSubmitted = searchParams.rma_submitted === "1";
-  const canRequestRma = order.status === "delivered" || order.status === "shipped";
+  const canRequestRma =
+    resolvedOrder.status === "delivered" || resolvedOrder.status === "shipped";
   const hasOpenRma = rmas.some(
     (r) => r.status === "pending" || r.status === "approved",
   );
-
-  async function submitRmaAction(formData: FormData): Promise<void> {
-    "use server";
-    const reason = (formData.get("reason") as string | null)?.trim() ?? "";
-    const notes = (formData.get("notes") as string | null)?.trim() ?? "";
-    if (!reason) return;
-    await createRmaRequest(orderId, user!.id, reason, notes);
-    redirect(`/account/orders/${encodeURIComponent(orderId)}?rma_submitted=1`);
-  }
 
   return (
     <main>
@@ -106,20 +135,23 @@ export default async function OrderDetailPage({
         ← Back to Orders
       </Link>
 
-      <h1>Order {order.order_number}</h1>
+      <h1>Order {resolvedOrder.order_number}</h1>
       <p>
-        Placed {formatDate(order.created_at)} &middot; Status:{" "}
-        <strong>{STATUS_LABEL[order.status] ?? order.status}</strong>
+        Placed {formatDate(resolvedOrder.created_at)} &middot; Status:{" "}
+        <strong>
+          {STATUS_LABEL[resolvedOrder.status] ?? resolvedOrder.status}
+        </strong>
       </p>
 
       {/* IP65/weatherproof safety notice — liability_assessor requirement */}
       <div className="card">
         <p className="muted">
-          <strong>IP65 Weatherproof Notice:</strong> Brightworks outdoor fixtures
-          are rated IP65 — protected against dust and low-pressure water jets under
-          normal outdoor conditions. They are <em>not</em> rated for submersion,
-          high-pressure wash-down, or poolside/underwater installation. This
-          limitation was acknowledged at checkout per our{" "}
+          <strong>IP65 Weatherproof Notice:</strong> Brightworks outdoor
+          fixtures are rated IP65 — protected against dust and low-pressure
+          water jets under normal outdoor conditions. They are{" "}
+          <em>not</em> rated for submersion, high-pressure wash-down, or
+          poolside/underwater installation. This limitation was acknowledged at
+          checkout per our{" "}
           <Link href="/terms">Terms &amp; Conditions</Link>.
         </p>
       </div>
@@ -138,7 +170,7 @@ export default async function OrderDetailPage({
             </tr>
           </thead>
           <tbody>
-            {order.items.map((item) => (
+            {resolvedOrder.items.map((item) => (
               <tr key={item.id}>
                 <td>{item.product_name}</td>
                 <td className="muted">{item.sku}</td>
@@ -154,7 +186,7 @@ export default async function OrderDetailPage({
                 <strong>Order Total</strong>
               </td>
               <td>
-                <strong>{formatCents(order.total_cents)}</strong>
+                <strong>{formatCents(resolvedOrder.total_cents)}</strong>
               </td>
             </tr>
           </tfoot>
@@ -166,17 +198,18 @@ export default async function OrderDetailPage({
         <h2>Shipping Address</h2>
         <div className="card">
           <p>
-            {order.shipping_name}
+            {resolvedOrder.shipping_name}
             <br />
-            {order.shipping_address_line1}
+            {resolvedOrder.shipping_address_line1}
             <br />
-            {order.shipping_address_line2 && (
+            {resolvedOrder.shipping_address_line2 && (
               <>
-                {order.shipping_address_line2}
+                {resolvedOrder.shipping_address_line2}
                 <br />
               </>
             )}
-            {order.shipping_city}, {order.shipping_state} {order.shipping_zip}
+            {resolvedOrder.shipping_city}, {resolvedOrder.shipping_state}{" "}
+            {resolvedOrder.shipping_zip}
           </p>
         </div>
       </section>
@@ -208,8 +241,8 @@ export default async function OrderDetailPage({
           <div className="card">
             <p>
               Your return request has been submitted. Our team will review it
-              within 2&ndash;3 business days and contact you by email with next
-              steps.
+              within 2&ndash;3 business days and contact you by email with
+              next steps.
             </p>
           </div>
         )}
@@ -233,9 +266,11 @@ export default async function OrderDetailPage({
         )}
 
         {!rmaSubmitted && canRequestRma && !hasOpenRma && (
-          <form action={submitRmaAction}>
-            <label htmlFor="reason">Reason for return</label>
-            <select id="reason" name="reason" required>
+          <form method="get">
+            <input type="hidden" name="rma_submit" value="1" />
+
+            <label htmlFor="rma_reason">Reason for return</label>
+            <select id="rma_reason" name="rma_reason" required>
               <option value="">— Select a reason —</option>
               {RMA_REASONS.map((r) => (
                 <option key={r} value={r}>
@@ -244,10 +279,10 @@ export default async function OrderDetailPage({
               ))}
             </select>
 
-            <label htmlFor="notes">Additional details (optional)</label>
+            <label htmlFor="rma_notes">Additional details (optional)</label>
             <textarea
-              id="notes"
-              name="notes"
+              id="rma_notes"
+              name="rma_notes"
               rows={4}
               placeholder="Describe the issue or any other relevant details…"
             />

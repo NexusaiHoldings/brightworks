@@ -1,10 +1,9 @@
 /**
  * Order history and RMA request data layer for Brightworks.
  *
- * Queries the brightworks_orders, brightworks_order_items, and
+ * Queries brightworks_orders, brightworks_order_items, and
  * brightworks_rma_requests tables via the substrate pg pool.
- *
- * All queries use parameterized placeholders ($1, $2, …) — never string
+ * All queries use parameterized placeholders ($1, $2) — never string
  * interpolation for user-supplied values.
  */
 import { buildDb } from "@/lib/db";
@@ -27,7 +26,13 @@ export interface OrderItemRow {
   unit_price_cents: number;
 }
 
-export interface OrderDetailRow extends OrderRow {
+export interface OrderDetailRow {
+  id: string;
+  order_number: string;
+  status: string;
+  created_at: string;
+  total_cents: number;
+  item_count: number;
   shipping_name: string;
   shipping_address_line1: string;
   shipping_address_line2: string | null;
@@ -90,8 +95,8 @@ export async function getOrderById(
     userId,
   );
 
-  const order = rows[0];
-  if (!order) return null;
+  const orderBase = rows[0];
+  if (!orderBase) return null;
 
   const items = await db.query<OrderItemRow>(
     `SELECT
@@ -107,7 +112,23 @@ export async function getOrderById(
     orderId,
   );
 
-  return { ...order, items };
+  const result: OrderDetailRow = {
+    id: orderBase.id,
+    order_number: orderBase.order_number,
+    status: orderBase.status,
+    created_at: orderBase.created_at,
+    total_cents: orderBase.total_cents,
+    item_count: orderBase.item_count,
+    shipping_name: orderBase.shipping_name,
+    shipping_address_line1: orderBase.shipping_address_line1,
+    shipping_address_line2: orderBase.shipping_address_line2,
+    shipping_city: orderBase.shipping_city,
+    shipping_state: orderBase.shipping_state,
+    shipping_zip: orderBase.shipping_zip,
+    items,
+  };
+
+  return result;
 }
 
 export async function getOrderRmaRequests(orderId: string): Promise<RmaRow[]> {

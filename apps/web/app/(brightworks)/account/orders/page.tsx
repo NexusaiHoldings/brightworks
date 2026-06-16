@@ -6,7 +6,8 @@ import type { JSX } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/admin-auth";
-import { getOrders, type OrderRow } from "@/lib/brightworks/orders";
+import { getOrders } from "@/lib/brightworks/orders";
+import type { OrderRow } from "@/lib/brightworks/orders";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -53,7 +54,9 @@ export default async function OrdersPage(): Promise<JSX.Element> {
       {orders.length === 0 ? (
         <div className="empty">
           <p>You have no orders yet.</p>
-          <Link href="/products" className="btn">Browse Products</Link>
+          <Link href="/products" className="btn">
+            Browse Products
+          </Link>
         </div>
       ) : (
         <table>
@@ -71,7 +74,9 @@ export default async function OrdersPage(): Promise<JSX.Element> {
             {orders.map((order) => (
               <tr key={order.id}>
                 <td>
-                  <Link href={`/account/orders/${encodeURIComponent(order.id)}`}>
+                  <Link
+                    href={`/account/orders/${encodeURIComponent(order.id)}`}
+                  >
                     {order.order_number}
                   </Link>
                 </td>
