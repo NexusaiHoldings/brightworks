@@ -16,13 +16,13 @@ import {
   seedDemoSkus,
   getLatestForecasts,
   getRecentSnapshots,
+  buildReplenishmentOrders,
   type DemandForecast,
   type ForecastSnapshot,
 } from "@/lib/brightworks/demand-forecast";
 import {
   daysUntilDeadline,
   SELL_IN_DEADLINE,
-  buildReplenishmentOrders,
   type ReplenishmentOrder,
 } from "@/lib/brightworks/pricing";
 
