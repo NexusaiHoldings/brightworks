@@ -1,26 +1,69 @@
-export const NAV_CONFIG = {
+export type NavLink = {
+  label: string;
+  href: string;
+  description?: string;
+  external?: boolean;
+};
+
+export type NavGroup = {
+  label: string;
+  links: NavLink[];
+};
+
+export type NavConfig = {
+  primary: NavLink[];
+  groups: NavGroup[];
+};
+
+export const NAV_CONFIG: NavConfig = {
   primary: [
-    { label: "Shop", href: "/shop" },
-    { label: "Selector", href: "/selector" },
-    { label: "Installer", href: "/installer" },
+    {
+      label: "Home",
+      href: "/",
+    },
+    {
+      label: "Shop",
+      href: "/shop",
+    },
+    {
+      label: "Product Selector",
+      href: "/selector",
+    },
+    {
+      label: "Installer Network",
+      href: "/installer",
+    },
   ],
   groups: [
     {
-      label: "Installer",
-      items: [
-        { label: "Apply", href: "/installer/apply" },
+      label: "Installers",
+      links: [
+        {
+          label: "Installer Portal",
+          href: "/installer",
+        },
+        {
+          label: "Apply to Install",
+          href: "/installer/apply",
+        },
       ],
     },
     {
       label: "Account",
-      items: [
-        { label: "Orders", href: "/account/orders" },
+      links: [
+        {
+          label: "Order History",
+          href: "/account/orders",
+        },
       ],
     },
     {
-      label: "Admin",
-      items: [
-        { label: "Forecasting", href: "/admin/forecasting" },
+      label: "Operations",
+      links: [
+        {
+          label: "Demand Forecasting",
+          href: "/admin/forecasting",
+        },
       ],
     },
   ],
