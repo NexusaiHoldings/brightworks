@@ -1,28 +1,40 @@
-export const NAV_CONFIG = {
+export type NavLink = {
+  label: string;
+  href: string;
+  external?: boolean;
+};
+
+export type NavGroup = {
+  label: string;
+  links: NavLink[];
+};
+
+export type NavConfig = {
+  primary: NavLink[];
+  groups: NavGroup[];
+};
+
+export const NAV_CONFIG: NavConfig = {
   primary: [
-    { href: "/conversation", label: "Conversation" },
-    { href: "/work", label: "Work" },
-    { href: "/artifact", label: "Artifacts" },
-    { href: "/approval", label: "Approvals" },
-    { href: "/direct", label: "Direct" },
-    { href: "/shop", label: "Shop" },
-    { href: "/selector", label: "Product Selector" },
+    { label: "Home", href: "/" },
+    { label: "Shop", href: "/shop" },
+    { label: "Product Selector", href: "/selector" },
+    { label: "Installer Program", href: "/installer" },
   ],
   groups: [
     {
-      label: "Installers",
-      items: [
-        { href: "/installer", label: "Installer Portal" },
-        { href: "/installer/apply", label: "Apply to Install" },
-      ],
+      label: "Installer Program",
+      links: [{ label: "Apply to Install", href: "/installer/apply" }],
     },
     {
       label: "Account",
-      items: [{ href: "/account/orders", label: "Order History" }],
+      links: [{ label: "Orders", href: "/account/orders" }],
     },
     {
       label: "Admin",
-      items: [{ href: "/admin/forecasting", label: "Forecasting" }],
+      links: [{ label: "Demand Forecasting", href: "/admin/forecasting" }],
     },
   ],
-} as const;
+};
+
+export default NAV_CONFIG;
