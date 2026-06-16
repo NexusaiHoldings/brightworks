@@ -24,6 +24,7 @@
  */
 
 import type { HandlerContext, HandlerResult } from "@nexus/identity-and-access";
+import { handleFetchDemandSignals } from "./fetch_demand_signals";
 
 type Args = Record<string, unknown>;
 
@@ -32,4 +33,5 @@ export const DOMAIN_DISPATCH: Record<
   (ctx: HandlerContext, args: Args) => Promise<HandlerResult>
 > = {
   // Build agent appends entries here per CTO-declared new_domain_tool.
+  fetch_demand_signals: (ctx, a) => handleFetchDemandSignals(ctx, a),
 };
