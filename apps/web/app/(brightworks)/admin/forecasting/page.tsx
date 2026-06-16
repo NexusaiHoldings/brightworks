@@ -6,6 +6,7 @@ import {
 import type { ForecastReport, SkuForecast } from "@/lib/brightworks/demand-forecast";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 export const revalidate = 0;
 
 function RiskBadge({ risk }: { risk: "high" | "medium" | "low" }) {
