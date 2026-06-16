@@ -1,29 +1,45 @@
-import { NAV_CONFIG as BASE_NAV_CONFIG } from "@/lib/legos.config";
+export type NavLink = {
+  label: string;
+  href: string;
+  external?: boolean;
+};
 
-export const NAV_CONFIG = {
-  ...BASE_NAV_CONFIG,
-  primary: [
-    ...BASE_NAV_CONFIG.primary,
-    { label: "Shop", href: "/shop" },
-    { label: "Product Selector", href: "/selector" },
-    { label: "Installers", href: "/installer" },
-  ],
-  groups: [
-    ...BASE_NAV_CONFIG.groups,
-    {
-      label: "Installers",
-      items: [
-        { label: "Installer Home", href: "/installer" },
-        { label: "Apply as Installer", href: "/installer/apply" },
-      ],
-    },
-    {
-      label: "Account",
-      items: [{ label: "Orders", href: "/account/orders" }],
-    },
-    {
-      label: "Admin",
-      items: [{ label: "Demand Forecasting", href: "/admin/forecasting" }],
-    },
-  ],
-} satisfies typeof BASE_NAV_CONFIG;
+export type NavGroup = {
+  label: string;
+  links: NavLink[];
+};
+
+export type NavConfig = {
+  primary: NavLink[];
+  groups: NavGroup[];
+};
+
+const PRIMARY_LINKS: NavLink[] = [
+  { label: "Home", href: "/" },
+  { label: "Shop", href: "/shop" },
+  { label: "Product Selector", href: "/selector" },
+  { label: "Installer Portal", href: "/installer" },
+];
+
+const GROUPS: NavGroup[] = [
+  {
+    label: "Installers",
+    links: [
+      { label: "Installer Portal", href: "/installer" },
+      { label: "Apply to Install", href: "/installer/apply" },
+    ],
+  },
+  {
+    label: "Account",
+    links: [{ label: "Order History", href: "/account/orders" }],
+  },
+  {
+    label: "Admin",
+    links: [{ label: "Demand Forecasting", href: "/admin/forecasting" }],
+  },
+];
+
+export const NAV_CONFIG: NavConfig = {
+  primary: PRIMARY_LINKS,
+  groups: GROUPS,
+};
