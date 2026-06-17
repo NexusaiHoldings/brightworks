@@ -13,6 +13,8 @@ export interface NavConfigShape {
   groups: NavGroup[];
 }
 
+export type NavConfig = NavConfigShape;
+
 export const NAV_CONFIG: NavConfigShape = {
   primary: [
     { label: "Shop", href: "/shop" },
