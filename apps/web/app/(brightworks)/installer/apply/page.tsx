@@ -4,6 +4,9 @@ import { handleSession } from "@nexus/identity-and-access";
 import { buildDb } from "@/lib/db";
 import { buildEventBus } from "@/lib/events";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 export const metadata = {
   title: "Apply for Installer Access | Brightworks",
   description:

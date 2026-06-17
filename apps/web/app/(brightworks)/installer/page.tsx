@@ -1,5 +1,8 @@
 import { requireInstallerAccess, wholesalePrice } from "@/lib/brightworks/access";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 export const metadata = {
   title: "Installer Wholesale Portal | Brightworks",
   description: "Exclusive wholesale pricing for Brightworks-certified installers.",

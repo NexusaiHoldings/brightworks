@@ -83,10 +83,13 @@ export async function requireInstallerAccess(): Promise<InstallerUser> {
   return user;
 }
 
+/** Flat volume discount for verified installers (CEO briefing MVP scope). */
+export const WHOLESALE_DISCOUNT = 0.2;
+
 /**
  * Compute the wholesale price from a retail price.
  * Applies the flat 20% volume discount defined in the CEO briefing MVP scope.
  */
 export function wholesalePrice(retailPrice: number): number {
-  return Math.round(retailPrice * 0.8 * 100) / 100;
+  return Math.round(retailPrice * (1 - WHOLESALE_DISCOUNT) * 100) / 100;
 }
