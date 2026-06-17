@@ -7,7 +7,7 @@ export type NavLink = {
 };
 
 export type NavGroup = {
-  title: string;
+  label: string;
   links: NavLink[];
 };
 
@@ -25,18 +25,18 @@ export const NAV_CONFIG: NavConfig = {
   ],
   groups: [
     {
-      title: "Installers",
+      label: "Installers",
       links: [
         { label: "Installer Portal", href: "/installer" },
         { label: "Apply to Install", href: "/installer/apply" },
       ],
     },
     {
-      title: "Account",
+      label: "Account",
       links: [{ label: "Order History", href: "/account/orders" }],
     },
     {
-      title: "Admin",
+      label: "Admin",
       links: [{ label: "Demand Forecasting", href: "/admin/forecasting" }],
     },
   ],
