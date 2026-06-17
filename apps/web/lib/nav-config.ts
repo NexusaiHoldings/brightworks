@@ -1,3 +1,5 @@
+// Extend NAV_CONFIG here — <TopNav /> reads this file; never edit the component.
+
 export type NavLink = {
   label: string;
   href: string;
