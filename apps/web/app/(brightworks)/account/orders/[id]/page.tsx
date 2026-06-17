@@ -58,10 +58,14 @@ export default async function OrderDetailPage({
     notFound();
   }
 
-  const rmaRequests = await getRmaRequests(params.id, user.id);
-  const rmaParam = Array.isArray(searchParams?.rma)
-    ? searchParams.rma[0]
-    : searchParams?.rma;
+  // Capture non-null values so server action closures can use them without
+  // TypeScript complaining about possible null (narrowing doesn't flow into closures).
+  const orderId = order.id;
+  const userId = user.id;
+
+  const rmaRequests = await getRmaRequests(params.id, userId);
+  const rmaRaw = searchParams?.rma;
+  const rmaParam = Array.isArray(rmaRaw) ? rmaRaw[0] : rmaRaw;
   const rmaSubmitted = rmaParam === "submitted";
   const rmaError = rmaParam === "error";
   const canRequestRma =
@@ -78,14 +82,14 @@ export default async function OrderDetailPage({
       formData.get("disclaimer_acknowledged") === "on";
 
     if (!reason || !disclaimerAcknowledged) {
-      redirect(`/account/orders/${order.id}?rma=error`);
+      redirect(`/account/orders/${orderId}?rma=error`);
     }
 
     let success = false;
     try {
       await createRmaRequest({
-        order_id: order.id,
-        user_id: user.id,
+        order_id: orderId,
+        user_id: userId,
         reason,
         notes,
         disclaimer_acknowledged: true,
@@ -97,8 +101,8 @@ export default async function OrderDetailPage({
 
     redirect(
       success
-        ? `/account/orders/${order.id}?rma=submitted`
-        : `/account/orders/${order.id}?rma=error`,
+        ? `/account/orders/${orderId}?rma=submitted`
+        : `/account/orders/${orderId}?rma=error`,
     );
   }
 
