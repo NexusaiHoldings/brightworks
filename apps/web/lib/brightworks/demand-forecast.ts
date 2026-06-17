@@ -161,7 +161,22 @@ export async function getSkuInventory(): Promise<SkuRow[]> {
   const result = await db.query(
     "SELECT id, name, current_inventory, keywords, region FROM brightworks_skus ORDER BY name"
   );
-  return result.rows as unknown as SkuRow[];
+  return result.rows.map((row) => {
+    const r = row as {
+      id: string;
+      name: string;
+      current_inventory: string | number;
+      keywords: string;
+      region: string;
+    };
+    return {
+      id: r.id,
+      name: r.name,
+      current_inventory: parseInt(String(r.current_inventory)),
+      keywords: r.keywords,
+      region: r.region,
+    };
+  });
 }
 
 export async function storeForecastResults(forecasts: SkuForecast[]): Promise<void> {
