@@ -1,10 +1,10 @@
 export type NavLink = {
-  title: string;
+  label: string;
   href: string;
 };
 
 export type NavGroup = {
-  title: string;
+  label: string;
   links: NavLink[];
 };
 
@@ -15,25 +15,25 @@ export type NavConfig = {
 
 export const NAV_CONFIG: NavConfig = {
   primary: [
-    { title: "Shop", href: "/shop" },
-    { title: "Product Selector", href: "/selector" },
-    { title: "Installer Portal", href: "/installer" },
+    { label: "Shop", href: "/shop" },
+    { label: "Product Selector", href: "/selector" },
+    { label: "Installer Portal", href: "/installer" },
   ],
   groups: [
     {
-      title: "Installers",
+      label: "Installers",
       links: [
-        { title: "Installer Portal", href: "/installer" },
-        { title: "Apply to be an Installer", href: "/installer/apply" },
+        { label: "Installer Portal", href: "/installer" },
+        { label: "Apply to be an Installer", href: "/installer/apply" },
       ],
     },
     {
-      title: "Account",
-      links: [{ title: "Order History", href: "/account/orders" }],
+      label: "Account",
+      links: [{ label: "Order History", href: "/account/orders" }],
     },
     {
-      title: "Admin",
-      links: [{ title: "Forecasting", href: "/admin/forecasting" }],
+      label: "Admin",
+      links: [{ label: "Forecasting", href: "/admin/forecasting" }],
     },
   ],
 };
