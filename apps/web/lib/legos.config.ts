@@ -63,6 +63,26 @@ export const LEGOS: readonly LegoConfig[] = [
   },
   {
     "config": {
+      "tier_ladder": [
+        {
+          "name": "DIY Essentials Kit",
+          "price_id": "price_1Tj5NA6WMeYkDDIuiRxnpTXh",
+          "amount": 4900,
+          "interval": "month"
+        },
+        {
+          "name": "Pro Connector Pack",
+          "price_id": "price_1Tj5NA6WMeYkDDIuzCO8lkHm",
+          "amount": 9900,
+          "interval": "month"
+        },
+        {
+          "name": "Full Install System",
+          "price_id": "price_1Tj5NA6WMeYkDDIurnI7DhlF",
+          "amount": 18900,
+          "interval": "month"
+        }
+      ],
       "default_currency": "usd",
       "enable_proration": true,
       "trial_days": 0
